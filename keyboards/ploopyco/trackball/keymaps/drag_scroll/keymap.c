@@ -18,13 +18,19 @@
 #include QMK_KEYBOARD_H
 
 
-const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [0] = LAYOUT( /* Base */
-        KC_BTN1, KC_BTN3, KC_BTN2,
-          KC_BTN4, LT(1, KC_BTN5)
-    ),
-    [1] = LAYOUT(
-        DRAG_SCROLL, _______, _______,
-          _______, _______
-    )
+extern uint16_t dpi_array[];
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case DRAG_SCROLL:
+            if (record->event.pressed) {
+                // this toggles the state each time you tap it
+                is_drag_scroll ^= 0.1;
+                pmw_set_cpi(dpi_array[keyboard_config.dpi_config] * (is_drag_scroll ? 0.8 : 1));
+
+            }
+            break;
+    }
+    return true;
+}
 };
